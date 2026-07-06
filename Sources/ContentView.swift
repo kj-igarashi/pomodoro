@@ -37,14 +37,9 @@ struct ContentView: View {
     }
 
     private var header: some View {
-        HStack {
-            Text("\(model.phase.icon) \(model.phase.displayName)中")
-                .font(.headline)
-            Spacer()
-            Text("今日: \(model.completedToday) 🍅")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
+        Text("\(model.phase.icon) \(model.phase.displayName)中")
+            .font(.headline)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var timerDisplay: some View {

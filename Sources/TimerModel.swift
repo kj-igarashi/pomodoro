@@ -44,7 +44,6 @@ final class TimerModel {
     var phase: Phase = .work
     var remaining: Int = 25 * 60
     var isRunning: Bool = false
-    var completedToday: Int = 0
 
     private let defaults = UserDefaults.standard
     private var timer: Timer?
@@ -59,7 +58,6 @@ final class TimerModel {
         restEndSound = defaults.string(forKey: "restEndSound") ?? "Ping"
         soundVolume = defaults.object(forKey: "soundVolume") as? Double ?? 100
         remaining = w * 60
-        loadTodayCount()
     }
 
     // MARK: - 派生値
@@ -141,7 +139,6 @@ final class TimerModel {
                              volumePercent: soundVolume)
             postNotification(for: finished)
         }
-        if finished == .work { incrementTodayCount() }
 
         phase = (finished == .work) ? .rest : .work
         remaining = currentTotal
@@ -160,31 +157,6 @@ final class TimerModel {
             remaining = currentTotal
             endDate = nil
         }
-    }
-
-    // MARK: - 今日の完了数（日付が変わったらリセット）
-    private func loadTodayCount() {
-        if defaults.string(forKey: "countDay") == Self.dayKey() {
-            completedToday = defaults.integer(forKey: "countValue")
-        } else {
-            completedToday = 0
-        }
-    }
-
-    private func incrementTodayCount() {
-        let today = Self.dayKey()
-        if defaults.string(forKey: "countDay") != today {
-            completedToday = 0
-        }
-        completedToday += 1
-        defaults.set(completedToday, forKey: "countValue")
-        defaults.set(today, forKey: "countDay")
-    }
-
-    private static func dayKey() -> String {
-        let f = DateFormatter()
-        f.dateFormat = "yyyy-MM-dd"
-        return f.string(from: Date())
     }
 
     // MARK: - 通知バナー（ベストエフォート）
