@@ -13,9 +13,8 @@ struct ContentView: View {
     private let sounds = SoundPlayer.availableSounds()
     private let presets: [Preset] = [
         Preset(label: "25 / 5", work: 25, rest: 5),
-        Preset(label: "50 / 15", work: 50, rest: 15),
-        Preset(label: "15 / 3", work: 15, rest: 3),
-        Preset(label: "12 / 3", work: 12, rest: 3),
+        Preset(label: "45 / 5", work: 45, rest: 5),
+        Preset(label: "50 / 10", work: 50, rest: 10),
     ]
 
     var body: some View {
@@ -28,6 +27,7 @@ struct ContentView: View {
             customSection
             Divider()
             soundSection
+            volumeSection
             Divider()
             footer
         }
@@ -132,12 +132,32 @@ struct ContentView: View {
             }
             .labelsHidden()
             Button {
-                SoundPlayer.play(selection.wrappedValue)
+                SoundPlayer.play(selection.wrappedValue, volumePercent: model.soundVolume)
             } label: {
                 Image(systemName: "play.circle")
             }
             .buttonStyle(.borderless)
             .help("試聴")
+        }
+    }
+
+    private var volumeSection: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text("効果音の音量").font(.caption).foregroundStyle(.secondary)
+                Spacer()
+                Text("\(Int(model.soundVolume))%")
+                    .font(.caption).monospacedDigit().foregroundStyle(.secondary)
+            }
+            HStack(spacing: 8) {
+                Image(systemName: "speaker.fill")
+                    .font(.caption2).foregroundStyle(.secondary)
+                Slider(value: $model.soundVolume, in: 0...200, step: 10)
+                Image(systemName: "speaker.wave.3.fill")
+                    .font(.caption2).foregroundStyle(.secondary)
+            }
+            Text("100% ＝ 標準。上げると増幅（上げすぎると音割れ）")
+                .font(.caption2).foregroundStyle(.tertiary)
         }
     }
 

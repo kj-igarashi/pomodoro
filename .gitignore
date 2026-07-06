@@ -1,0 +1,10 @@
+# ビルド生成物（コンパイル済み .app — ./build.sh で再生成）
+build/
+
+# macOS
+.DS_Store
+
+# Xcode / SwiftPM（念のため）
+*.xcuserstate
+.swiftpm/
+.build/

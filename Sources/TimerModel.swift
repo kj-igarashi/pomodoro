@@ -17,7 +17,7 @@ enum Phase: String {
 @Observable
 final class TimerModel {
 
-    // MARK: - 永続化する設定
+    // MARK: - 永続化する設定（次回起動時も引き継ぐ）
     var workMinutes: Int {
         didSet {
             defaults.set(workMinutes, forKey: "workMinutes")
@@ -35,6 +35,9 @@ final class TimerModel {
     }
     var restEndSound: String {
         didSet { defaults.set(restEndSound, forKey: "restEndSound") }
+    }
+    var soundVolume: Double {   // 効果音の音量（%）。100=標準
+        didSet { defaults.set(soundVolume, forKey: "soundVolume") }
     }
 
     // MARK: - 実行時の状態
@@ -54,6 +57,7 @@ final class TimerModel {
         restMinutes = r
         workEndSound = defaults.string(forKey: "workEndSound") ?? "Glass"
         restEndSound = defaults.string(forKey: "restEndSound") ?? "Ping"
+        soundVolume = defaults.object(forKey: "soundVolume") as? Double ?? 100
         remaining = w * 60
         loadTodayCount()
     }
@@ -133,7 +137,8 @@ final class TimerModel {
         let finished = phase
 
         if playSound {
-            SoundPlayer.play(finished == .work ? workEndSound : restEndSound)
+            SoundPlayer.play(finished == .work ? workEndSound : restEndSound,
+                             volumePercent: soundVolume)
             postNotification(for: finished)
         }
         if finished == .work { incrementTodayCount() }
